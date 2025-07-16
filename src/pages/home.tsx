@@ -5,7 +5,7 @@ import { VideoList } from "../components/videoList"
 export function Home() {
   return (
     <main className="w-full h-screen flex">
-      <div className="bg-purple-950 text-white flex flex-col gap-2 p-4 w-72 h-1/2 ">
+      <div className="bg-stone-900 text-white flex flex-col gap-2 p-4 w-82 h-1/2 ">
         <div className="flex-shrink-0">
           <Header />
         </div>
