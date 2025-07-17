@@ -23,7 +23,7 @@ const schema = z.object({
 });
 
 
-export default function Login() {
+export default function Register() {
 
 
 
@@ -73,7 +73,7 @@ export default function Login() {
             />
             <Button  type="submit" titulo="Entrar" />
        
-        <div className="z-10 w-full bg-orange-500 h-1 relative left-0  transform rounded-xs ">
+        <div className="z-10 w-full bg-orange-500 h-1 relative left-0  transform  ">
           <p className="text-center text-sm bg-stone-900 absolute z-20 left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 px-3 py-1 ">Ou</p>
         </div>
      
