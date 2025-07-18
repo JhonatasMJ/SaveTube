@@ -1,8 +1,6 @@
 import { createContext, useContext, useState } from "react";
 import type { LoadingData, LoadingProps } from "../types/loading";
 
-
-
 const LoadingContext = createContext({} as LoadingData);
 
 export function LoadingProvider({ children }: LoadingProps) {

@@ -1,10 +1,8 @@
 
-import { useState, type InputHTMLAttributes, type ReactNode } from "react";
+import { useState } from "react";
+import type { InputProps } from "../types/components";
 
-export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
-  label: string;
-  icon?: ReactNode;
-}
+
 
 export function Input({ label, icon, id,placeholder,...props}: InputProps) {
   const [isFocused, setIsFocused] = useState(false);

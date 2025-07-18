@@ -1,10 +1,4 @@
-import type { ButtonHTMLAttributes } from "react";
-
-interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
-    titulo: string
-    type?: "button" | "submit"
-}
-
+import type { ButtonProps } from "../types/components";
 
 export function Button ({titulo, ...props}: ButtonProps) {
     return (
