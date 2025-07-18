@@ -32,7 +32,7 @@ export function Input({ label, icon, id,placeholder,...props}: InputProps) {
         </div>
         
         <input
-          className="flex-1 bg-transparent border-none placeholder:text-zinc-600 focus:outline-none"
+          className="flex-1 bg-transparent border-none text-sm placeholder:text-zinc-600 focus:outline-none"
           type="text"
           placeholder={placeholder}
           {...props}

@@ -5,7 +5,8 @@ import z from "zod/v4";
 import { InputForm } from "../components/inputForm";
 import { Lock, Mail } from "lucide-react";
 import { Button } from "../components/button";
-
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 interface FormData {
   email: string;
   senha: string;
@@ -16,17 +17,12 @@ const schema = z.object({
     .string()
     .min(1, "E-mail obrigatório")
     .email("E-mail inválido"),
-    
   senha: z
     .string()
     .min(1, "Senha obrigatória"),
 });
 
-
 export default function Register() {
-
-
-
   const {
     control,
     handleSubmit,
@@ -35,11 +31,13 @@ export default function Register() {
      resolver: zodResolver(schema),
   });
 
-  async function handleLogin(form: FormData) {
-    console.log(form);
+  const {  register } = useAuth();
+
+  async function handleRegister(form: FormData) {
+    await register (form);
   }
 
-
+  const navigate = useNavigate();
 
   return (
     <main className="w-full h-screen flex">
@@ -47,21 +45,18 @@ export default function Register() {
         <img className="w-20 h-12" src={Logo} alt="Logotipo" />
         <h3 className="flex items-center gap-2 text-xl font-bold mb-2">
           <span className="h-2.5 w-1 bg-orange-500 "></span>
-          Login
+          Crie sua Conta
         </h3>
-        <form onSubmit={handleSubmit(handleLogin)} className="flex flex-col  w-full gap-4">
+        <form onSubmit={handleSubmit(handleRegister)} className="flex flex-col  w-full gap-4">
             <InputForm
               icon= {<Mail className="size-4 ml-2 focus:text-orange-500"/>}
               label="E-mail"
-   
               placeholder="Digite seu e-mail"
               control={control}
               id="email"
               type="email"
               error={errors.email?.message}
             />
-
-            
              <InputForm
               icon= {<Lock className="size-4 ml-2 focus:text-orange-500"/>}
               label="Senha"
@@ -71,14 +66,12 @@ export default function Register() {
               type="password"
               error={errors.senha?.message}
             />
-            <Button  type="submit" titulo="Entrar" />
-       
-        <div className="z-10 w-full bg-orange-500 h-1 relative left-0  transform  ">
+            <Button   type="submit" titulo="Criar" />
+        </form>
+        <div className="z-10 w-full bg-orange-500 h-1 relative left-0  transform my-4">
           <p className="text-center text-sm bg-stone-900 absolute z-20 left-1/2 top-1/2 transform -translate-x-1/2 -translate-y-1/2 px-3 py-1 ">Ou</p>
         </div>
-     
-        <Button className="bg-stone-900"  titulo="Criar Conta" />
-        </form>
+        <Button onClick={() => navigate("/")} className="bg-stone-900"  titulo="Já tenho uma conta" />
       </div>
     </main>
   );
