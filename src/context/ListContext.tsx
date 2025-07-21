@@ -1,58 +1,127 @@
-import { createContext, useContext, useEffect, useState } from "react";
-import type {  LoadingProps } from "../types/loading";
+import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import type { LoadingProps } from "../types/loading";
 import type { Video } from "../components/videoItem";
 import axios from "axios";
 import { formatYTDuration } from "../utils/formatYTDurations";
-import { set } from "zod";
+import { useLoading } from "./LoadingContext";
 
+import { addDoc, collection, deleteDoc, doc, getDocs, query, where, type CollectionReference } from "firebase/firestore";
+import { db } from "../config/firebase";
+import { useAuth } from "./AuthContext";
 
 interface ListData {
-    currentVideo: Video;
+  list: Video[];
+  currentVideo: Video;
+  createListItem: (videoData: Video) => Promise<void>;
+  deleteListItem: (itemID: string) => Promise<void>;
 }
 
 const ListContext = createContext({} as ListData);
 
 export function ListProvider({ children }: LoadingProps) {
-    const [currentVideo, setCurrentVideo] = useState({} as Video);
-    
-const ytBaseLink = 'youtube.com/watch';
-const apiKey = import.meta.env.VITE_YOUTUBE_API_KEY;
+  const { isLoading, toggleLoading } = useLoading();
+  const { user } = useAuth();
+  const [list, setList] = useState<Video[]>([]);
+  const [currentVideo, setCurrentVideo] = useState({} as Video);
+
+  const ref = collection(db, "videos") as CollectionReference<Video>;
+
+   
+  async function createListItem(videoData: Video) {
+    if (isLoading || !user?.id) return;
+    try {
+      toggleLoading(true);
+      const data = {
+        ...videoData,
+        userId: user.id,
+      };
+      const response = await addDoc(ref, data);
+      setList((old) => [...old, { ...videoData, id: response.id }]);
+    } catch (error) {
+      console.error("Error creating list item:", error);
+    } finally {
+      toggleLoading(false);
+    }
+  }
 
 
-async function getCurrentVideoData (url:string) {
-    const {data} = await axios.get(url);
+  async function deleteListItem(itemID: string) { 
+    if(isLoading) return;
+    try {
+      toggleLoading(true);
+      const itemDoc = doc(db, "videos", itemID);
+      await deleteDoc(itemDoc);
+      setList(old => old.filter(video => video.docId !== itemID));
+    } catch (error) {
+      console.error("Error deleting list item:", error);
+    } finally {
+      toggleLoading(false);
+    }
+  }
+
+  const getUserList = useCallback(async () => {
+    if (!user?.id) return;
+    try {
+      toggleLoading(true);
+      const userQuery = query(ref, where("userId", "==", user.id));
+      const data = await getDocs(userQuery);
+      const formattedData = data.docs.map((doc) => ({
+        ...doc.data(),
+        docId: doc.id,
+      }));
+        setList(formattedData)
+    } catch (error) {
+      console.error("Error fetching user list:", error);
+    } 
+    finally {
+      toggleLoading(false);
+    }
+  },[user])
+
+
+  useEffect(() => {
+    getUserList();
+  }, [user]);
+
+  const ytBaseLink = "youtube.com/watch";
+  const apiKey = import.meta.env.VITE_YOUTUBE_API_KEY;
+
+  async function getCurrentVideoData(url: string) {
+    const { data } = await axios.get(url);
+    if (!data.items || !data.items.length) return;
+
     const video = data.items[0];
     const duration = formatYTDuration(video.contentDetails.duration);
     setCurrentVideo({
-        
-    })
-}
+      id: video.id,
+      title: video.snippet.title,
+      thumbnail: video.snippet.thumbnails.default.url,
+      duration: duration.formatted,
+      durationMs: duration.ms,
+    });
+  }
 
-    useEffect(() => { 
-        if (chrome?.tabs?.query) { 
-            chrome.tabs.query({currentWindow: true, active: true}, (tabs) => {
-                const newUrl = tabs[0]?.url;
-                if (newUrl && newUrl.includes(ytBaseLink)) {
-                   const videoId = newUrl.replace('https://www.youtube.com/watch?v=', ''); 
-                   const apiUrl = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&key=${apiKey}&part=snippet,statistics,contentDetails`;
-                   getCurrentVideoData(apiUrl);
-                }    
-            })    
+  useEffect(() => {
+    if (chrome?.tabs?.query) {
+      chrome.tabs.query({ currentWindow: true, active: true }, (tabs) => {
+        const newUrl = tabs[0]?.url;
+        if (newUrl && newUrl.includes(ytBaseLink)) {
+          const videoId = newUrl.replace("https://www.youtube.com/watch?v=", "");
+          const apiUrl = `https://www.googleapis.com/youtube/v3/videos?id=${videoId}&key=${apiKey}&part=snippet,statistics,contentDetails`;
+          getCurrentVideoData(apiUrl);
         }
-    }, [chrome.tabs]);
-
- 
+      });
+    }
+  }, [chrome.tabs]);
 
   return (
-  <ListContext.Provider value={{ currentVideo }}>
-    {children}
-  </ListContext.Provider>
-  )
+    <ListContext.Provider value={{ list, currentVideo, createListItem, deleteListItem }}>
+      {children}
+    </ListContext.Provider>
+  );
 }
 
-//Deixo pronto para usar
 // eslint-disable-next-line react-refresh/only-export-components
 export function useList() {
-  const context = useContext(ListContext);
-  return context;
+  return useContext(ListContext);
 }
