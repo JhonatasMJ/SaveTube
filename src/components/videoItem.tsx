@@ -1,5 +1,16 @@
 import { Clock, Play, Trash2 } from "lucide-react";
 
+
+
+export interface Video {
+  docId?: string;
+  id: string;
+  title: string;
+  thumbnail: string;
+  duration: string;
+  durationMs: number;
+}
+
 export function VideoItem() {
   return (
     <div className="w-full bg-stone-800 rounded-md overflow-hidden relative">
