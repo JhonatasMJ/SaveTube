@@ -1,6 +1,3 @@
-
-
-
 @import "tailwindcss";
 
 ::-webkit-scrollbar {
@@ -9,7 +6,7 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #DB6A4C;
+  background: #db6a4c;
   border-radius: 0.8rem;
 }
 
@@ -19,15 +16,34 @@
 }
 
 html {
-  min-height: 30rem;
-  max-height: 30rem;
+  width: 350px;
+  height: 500px;
+  min-width: 350px;
+  min-height: 500px;
+  max-width: 350px;
+  max-height: 500px;
+  overflow: hidden;
 }
 
 body {
   transition: all 0.50s linear;
   color: #f8f8f2;
+  margin: 0;
+  padding: 0;
+  width: 350px;
+  height: 500px;
+  overflow: hidden;
 }
 
-body, input, textarea, button {
+body,
+input,
+textarea,
+button {
   font-family: "Poppins", sans-serif;
+}
+
+#root {
+  width: 350px;
+  height: 500px;
+  overflow: hidden;
 }

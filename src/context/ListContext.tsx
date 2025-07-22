@@ -1,4 +1,4 @@
-import { createContext, useCallback, useContext, useEffect, useState } from "react";
+import { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
 import type { LoadingProps } from "../types/loading";
 import type { Video } from "../components/videoItem";
 import axios from "axios";
@@ -12,6 +12,7 @@ import { useAuth } from "./AuthContext";
 interface ListData {
   list: Video[];
   currentVideo: Video;
+  totalTime: number;
   createListItem: (videoData: Video) => Promise<void>;
   deleteListItem: (itemID: string) => Promise<void>;
 }
@@ -45,13 +46,13 @@ export function ListProvider({ children }: LoadingProps) {
   }
 
 
-  async function deleteListItem(itemID: string) { 
+  async function deleteListItem(itemId: string) { 
     if(isLoading) return;
     try {
       toggleLoading(true);
-      const itemDoc = doc(db, "videos", itemID);
+      const itemDoc = doc(db, "videos", itemId);
       await deleteDoc(itemDoc);
-      setList(old => old.filter(video => video.docId !== itemID));
+      setList(old => old.filter(video => video.docId !== itemId));
     } catch (error) {
       console.error("Error deleting list item:", error);
     } finally {
@@ -114,8 +115,15 @@ export function ListProvider({ children }: LoadingProps) {
     }
   }, [chrome.tabs]);
 
+  const totalTime = useMemo(() => { 
+    return list.reduce((acc, video) => {
+      return acc + video.durationMs;
+    }, 0);
+  }, [list]);
+
+
   return (
-    <ListContext.Provider value={{ list, currentVideo, createListItem, deleteListItem }}>
+    <ListContext.Provider value={{ list, totalTime,currentVideo, createListItem, deleteListItem }}>
       {children}
     </ListContext.Provider>
   );

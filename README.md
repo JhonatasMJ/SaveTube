@@ -1,6 +1,6 @@
-# SpaceList 📋🎥
+# SaveTube 📋🎥
 
-<img src="https://user-images.githubusercontent.com/71772559/164887367-576eb71f-a32d-4a89-9ad1-14d251f71fc0.png" width="2000" align="center" />
+<img src="./src/assets/savetub.png" />
 
 &nbsp;
 
@@ -21,22 +21,23 @@
 
 ## 🎨 Telas do projeto
 
-<img src="https://user-images.githubusercontent.com/71772559/164887794-892552fc-7cbe-467b-b7ba-40db331dd56c.png" width="2000" align="center" />
+<img src="./src/assets/telas.png" />
 
 &nbsp;
 
 ## 🛠️ Tecnologias/Ferramentas utilizadas
 
-* [Vite](https://vitejs.dev/)
+* [React](https://react.dev/)
 * [TypeScript](https://www.typescriptlang.org/)
-* [Styled Components](https://styled-components.com/)
+* [TailwindCss](https://tailwindcss.com/)
 * [Firebase](https://firebase.google.com/)
 * [React Hook Form](https://react-hook-form.com/)
+* [Vite](https://vitejs.dev/)
 
 &nbsp;
 
 ---
 
-<p align="center">Feito com 💙 por <a href="https://jhonatas-portfolio.vercel.app/">Jhonatas Micael</a></p>
+<p align="center">Feito com 🧡 por <a href="https://jhonatas-portfolio.vercel.app/">Jhonatas Micael</a></p>
 
 

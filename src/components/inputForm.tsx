@@ -1,8 +1,10 @@
 import { Controller } from "react-hook-form"
-import { Input, type InputProps } from "./input"
+import { Input } from "./input"
+import type { InputProps } from "../types/components"
 
 type Props = InputProps & {
     id: string;
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     control: any;
     error?: string;
 }
